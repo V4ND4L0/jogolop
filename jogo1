@@ -1,0 +1,195 @@
+var xp, yp;   
+var passoc,passob,passoe,passod  
+var xo, yo;  
+var bg;
+  
+var disparo = false; 
+
+var img, vilao ; 
+
+
+var inimigosX = []; 
+var inimigosY = []; 
+
+
+var velocidade; 
+
+
+var balasX; 
+var balasY; 
+
+var contI = 9; 
+
+var fase;
+var tempo = 0;
+var som;
+var pontuação=0;
+var tela = 1;
+var vida=3;
+function preload() {
+  img = loadImage("ship1.png");
+  vilao = loadImage('cometa.png');
+  bg = loadImage("vortex.png");
+  som=loadSound("space.mp3");
+  
+}
+ 
+function setup() { 
+  som.setVolume(0,60);
+	som.play();
+	createCanvas(600, 400);
+	xp = 56;
+	yp = 300; 
+	for(i=0;i<contI;i++){
+		inimigosX[i] = random(25, width-25);
+		inimigosY[i] = -random(height); 
+	}
+	
+	passoc = 4 , passod= 4 , passoe=4 , passob=4 ; 
+	velocidade = 3;
+	fase=1;
+  
+}
+
+function draw() {
+  if(tela === 1){
+		textSize(28); 
+		fill(200);
+		text("Pressione Enter Para Iniciar", 115, 240);
+		if(keyIsDown(13)){ 
+			tela = 2; 
+		}
+	}
+	if(tela === 2){
+     tempo++;
+	
+	if (keyIsDown(UP_ARROW))
+		yp = yp -passoc;      
+	if (keyIsDown(DOWN_ARROW))
+		yp = yp +passob;
+	if (keyIsDown(LEFT_ARROW))
+		xp = xp -passoe;    
+	if (keyIsDown(RIGHT_ARROW))
+		xp = xp +passod;     
+	 
+	if (keyIsDown(70) ) { 
+		disparo = true; 
+		
+		
+		balasY = yp; 
+		balasX = xp+25;
+	}
+	
+  if(xp<=0){
+    xp=1
+  }if(xp>=600){
+xp=590
+  }if(yp<=0){
+    yp=1
+  }if(yp>=350){
+    yp=345
+  }
+	
+	
+	
+	if(tempo>1000){
+		velocidade = 6;
+	}
+	
+	if(tempo>2000){
+		velocidade = 8;
+		
+	}
+	if(tempo>3500){
+		velocidade = 10;
+	}
+	
+	
+	for(i=0;i<contI;i++){
+		
+		inimigosY[i] = inimigosY[i] + velocidade; 
+	}
+	
+	
+	
+	for(i=0;i<contI;i++){
+		if (inimigosY[i] > height) {
+			inimigosY[i] = -random(height); 
+			inimigosX[i] = random(25, width-25);
+		}	
+	}
+	
+	
+	
+		if(disparo==true){
+			balasY = balasY - 4;
+		}	
+		
+				
+		
+		if (balasY < 0 ) {
+			balasY = -20;
+			disparo=false;
+		}
+		for(i=0;i<9;i++){	
+			if(dist(inimigosX[i],inimigosY[i],balasX,balasY) <= 50){
+				pontuação = pontuação + 1
+			inimigosY[i] = -random(height); 
+			inimigosX[i] = random(25, width-25);
+			}
+			}
+		for(i=0;i<9;i++){
+			if(dist(inimigosX[i],inimigosY[i],xp,yp) <= 40){
+				vida = vida-1;
+			inimigosY[i] = -random(height); 
+			inimigosX[i] = random(25, width-25);
+			}
+		}
+			
+	
+	clear();
+	
+	 
+	background(bg);
+	image(img, xp, yp,50,50);
+	
+	
+	
+	if(disparo){ 
+		ellipse(balasX,balasY,5,5);
+	}
+	
+	
+	for(i=0;i<contI;i++){ 
+		rect(inimigosX[i],inimigosY[i],50,50);
+		image(vilao,inimigosX[i],inimigosY[i],50,50);
+	}
+	
+	if(tempo>1000){
+		fase=2;
+	}
+	if(tempo>2000){
+		fase=3;
+	}
+	
+	textSize(20);
+	text("tempo:"+tempo+" " +"fase"+fase+" "+"pontuação:"+ pontuação +" " + "vida:" +vida,80,350);
+	
+	if(vida === 0){
+		tela = 3;
+	}
+}
+	
+	if(tela === 3){
+		clear();
+		background(0);
+		textSize(28); 
+		fill(200);
+		text("FIM DE JOGO." +" "+ "SUA PONTUAÇÃO FOI:"+ " "+" " +pontuação, 55, 240);
+		if ( keyIsDown(13) ){ 
+			tela = 1; 
+		}
+	}
+	
+
+}
